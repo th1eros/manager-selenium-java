@@ -15,12 +15,10 @@ public class GuiaDomesticoTest {
 
     @BeforeEach
     void setup() {
-        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
-        System.setProperty("selenium-manager.enabled", "false");
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
         driver = new ChromeDriver(options);
-    }   
+    }
 
     @Test
     @DisplayName("Escanear Elementos de Login")
