@@ -92,9 +92,10 @@ public class GuiaDomesticoTest {
             currentUrl, 
             java.time.LocalDateTime.now()
         );
-
+        
         EmailService.enviarRelatorio(corpoEmail);
         assertTrue(sucesso, "Login falhou: redirecionamento incorreto ou credenciais inválidas. URL final: " + currentUrl);
+        System.out.println(">>> CONTEÚDO DO E-MAIL QUE SERIA ENVIADO:\n" + corpoEmail);
     }
 
     @AfterEach
