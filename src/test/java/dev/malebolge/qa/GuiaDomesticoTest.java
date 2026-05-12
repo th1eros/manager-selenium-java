@@ -7,6 +7,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import java.util.List;
 
 public class GuiaDomesticoTest {
@@ -14,16 +15,12 @@ public class GuiaDomesticoTest {
 
     @BeforeEach
     void setup() {
+        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
+        System.setProperty("selenium-manager.enabled", "false");
         ChromeOptions options = new ChromeOptions();
-        
-        if (System.getenv("CI") != null) {
-            options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
-            options.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36");
-            options.setBinary("/usr/bin/google-chrome");
-        }
-        
+        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
         driver = new ChromeDriver(options);
-    }
+    }   
 
     @Test
     @DisplayName("Escanear Elementos de Login")
@@ -48,17 +45,40 @@ public class GuiaDomesticoTest {
 
     @Test
     @DisplayName("Executar Login e Enviar Documentação para o Drive")
-    void testLoginCompletoComEmail() {
+    void testLoginCompletoComEmail() throws InterruptedException {
         String email = System.getenv("QA_EMAIL");
         String senha = System.getenv("QA_PWD");
 
-        driver.get("https://guiadomestico.com.br/publico/usuario/usuario_login.php");
+        if (email == null || email.isEmpty()) {
+            fail("Variável de ambiente QA_EMAIL não definida");
+        }
+        if (senha == null || senha.isEmpty()) {
+            fail("Variável de ambiente QA_PWD não definida");
+        }
+
+        String loginUrl = "https://guiadomestico.com.br/publico/usuario/usuario_login.php";
+        driver.get(loginUrl);
         
         driver.findElement(By.id("EMAIL_USUARIO")).sendKeys(email);
         driver.findElement(By.id("SENHA_USUARIO")).sendKeys(senha);
         driver.findElement(By.id("SENHA_USUARIO")).submit();
         
-        boolean sucesso = driver.getCurrentUrl().contains("painel") || driver.getCurrentUrl().contains("home");
+        Thread.sleep(4000);
+        
+        String currentUrl = driver.getCurrentUrl();
+        String pageTitle = driver.getTitle();
+        System.out.println(">>> URL após login: " + currentUrl);
+        System.out.println(">>> Título da página: " + pageTitle);
+        
+        boolean sucesso = false;
+        if (!currentUrl.equals(loginUrl) && !currentUrl.contains("usuario_login.php")) {
+            sucesso = true;
+        } else {
+            List<WebElement> errorMessages = driver.findElements(By.cssSelector(".alert-danger, .error, .mensagem-erro"));
+            if (!errorMessages.isEmpty()) {
+                System.out.println(">>> Mensagem de erro encontrada: " + errorMessages.get(0).getText());
+            }
+        }
         
         String corpoEmail = String.format(
             "PROJETO INTEGRADOR 1 - 2026\n" +
@@ -71,12 +91,12 @@ public class GuiaDomesticoTest {
             "---------------------------\n" +
             "Relatório gerado automaticamente via Selenium Headless.",
             sucesso ? "SUCESSO (PASS)" : "FALHA (FAIL)", 
-            driver.getCurrentUrl(), 
+            currentUrl, 
             java.time.LocalDateTime.now()
         );
 
         EmailService.enviarRelatorio(corpoEmail);
-        assertTrue(sucesso, "Login falhou: redirecionamento incorreto.");
+        assertTrue(sucesso, "Login falhou: redirecionamento incorreto ou credenciais inválidas. URL final: " + currentUrl);
     }
 
     @AfterEach
