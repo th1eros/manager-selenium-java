@@ -19,12 +19,17 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Install Chrome
+      - name: Install Chrome and ChromeDriver
         run: |
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
+          CHROME_VERSION=$(google-chrome --version | awk '{print $3}')
+          # Instala o ChromeDriver compatível
+          wget -q "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/${CHROME_VERSION}/linux64/chromedriver-linux64.zip"
+          unzip chromedriver-linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+          sudo chmod +x /usr/local/bin/chromedriver
 
-      - name: Run QA Tests
+      - name: Run QA Tests (headless)
         run: |
-          chmod +x mvnw || true
-          mvn test -Dtest=GuiaDomesticoTest
+          mvn test -Dtest=GuiaDomesticoTest -Dheadless=true

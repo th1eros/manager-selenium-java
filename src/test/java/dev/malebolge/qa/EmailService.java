@@ -8,7 +8,7 @@ public class EmailService {
     public static void enviarRelatorio(String mensagemCorpo) {
         final String username = System.getenv("EMAIL_USER");
         final String password = System.getenv("EMAIL_PASS");
-        final String destinatarios = "driveunivesp@gmail.com, alexandrebessa87@gmail.com";
+        final String destinatarios = System.getenv("EMAIL_DEST");
 
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "smtp.gmail.com");
