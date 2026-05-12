@@ -36,3 +36,23 @@ jobs:
         with:
           name: surefire-reports
           path: target/surefire-reports/
+      - name: Send email notification on failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USER }}
+          password: ${{ secrets.EMAIL_PASS }}
+          subject: "❌ QA Pipeline failed - ${{ github.repository }}"
+          to: ${{ secrets.ALERT_EMAIL }}
+          from: ${{ secrets.EMAIL_USER }}
+          body: |
+            O pipeline de QA falhou.
+
+            Repositório: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Workflow: ${{ github.workflow }}
+
+            Logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
