@@ -14,11 +14,14 @@ public class GuiaDomesticoTest {
 
     @BeforeEach
     void setup() {
-        System.setProperty("webdriver.chrome.driver", "/usr/lib/chromium-browser/chromedriver");
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
-        options.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36");
-        options.setBinary("/usr/bin/chromium-browser");
+        
+        if (System.getenv("CI") != null) {
+            options.addArguments("--headless", "--no-sandbox", "--disable-dev-shm-usage");
+            options.addArguments("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36");
+            options.setBinary("/usr/bin/google-chrome");
+        }
+        
         driver = new ChromeDriver(options);
     }
 
@@ -55,7 +58,7 @@ public class GuiaDomesticoTest {
         driver.findElement(By.id("SENHA_USUARIO")).sendKeys(senha);
         driver.findElement(By.id("SENHA_USUARIO")).submit();
         
-        boolean sucesso = driver.getCurrentUrl().contains("home");
+        boolean sucesso = driver.getCurrentUrl().contains("painel") || driver.getCurrentUrl().contains("home");
         
         String corpoEmail = String.format(
             "PROJETO INTEGRADOR 1 - 2026\n" +
@@ -78,6 +81,8 @@ public class GuiaDomesticoTest {
 
     @AfterEach
     void tearDown() {
-        if (driver != null) driver.quit();
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }

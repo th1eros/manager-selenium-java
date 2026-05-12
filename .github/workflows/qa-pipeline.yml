@@ -22,8 +22,14 @@ jobs:
       - name: Setup Chrome
         uses: browser-actions/setup-chrome@latest
 
-      - name: Setup Chromedriver
+      - name: Setup Chromedriver (compatible with installed Chrome)
         uses: nanasess/setup-chromedriver@master
+
+      - name: Remove conflicting old chromedriver (if any)
+        run: |
+          sudo rm -f /usr/lib/chromium-browser/chromedriver || true
+          sudo rm -f /usr/bin/chromedriver || true
+          which chromedriver || echo "chromedriver not found in PATH – will use the one from setup-chromedriver"
 
       - name: Run QA Tests (headless)
         env:
@@ -32,5 +38,10 @@ jobs:
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
           EMAIL_DEST: ${{ secrets.EMAIL_DEST }}
+          # Força o selenium a usar o chromedriver correto do PATH
+          WEBDRIVER_CHROME_DRIVER: ${{ steps.setup-chromedriver.outputs.chromedriver-path }}
         run: |
-          mvn test -Dtest=GuiaDomesticoTest -Dheadless=true
+          # Garante que o chromedriver está no PATH
+          export PATH="$PATH:/usr/local/bin"
+          # Executa os testes com headless (se o código ler a propriedade)
+          mvn test -Dtest=GuiaDomesticoTest -Dheadless=true -Dwebdriver.chrome.driver=$(which chromedriver)
