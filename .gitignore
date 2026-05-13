@@ -1,18 +1,19 @@
-# Maven
+# Arquivos de build
 target/
 *.class
-
-# Logs
 *.log
+*.tar.gz
 
-# IDEs
-.idea/
+# Projetos externos
+main/
+malebolge/
+
+# IDE
 .vscode/
-*.iml
+.settings/
+.project
+.classpath
 
-# OS e Temporários
-.DS_Store
-Relatorio_QA_*.txt
-
-# Security (Secrets)
-.env
+# Chromedriver local (se houver)
+chromedriver
+geckodriver
