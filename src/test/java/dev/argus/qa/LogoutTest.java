@@ -20,15 +20,13 @@ public class LogoutTest extends BaseTest {
             throw new IllegalStateException("QA_PWD não definida");
         }
 
-        // Faz login
         driver.get("https://guiadomestico.com.br/publico/usuario/usuario_login.php");
         driver.findElement(By.id("EMAIL_USUARIO")).sendKeys(email);
         driver.findElement(By.id("SENHA_USUARIO")).sendKeys(senha);
         driver.findElement(By.id("SENHA_USUARIO")).submit();
 
-        Thread.sleep(3000); // aguarda login
+        Thread.sleep(3000); 
 
-        // Acessa URL de logout
         driver.get("https://guiadomestico.com.br/acesso/logout.php");
 
         Thread.sleep(2000);
