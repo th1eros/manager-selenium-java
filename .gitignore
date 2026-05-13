@@ -1,0 +1,18 @@
+# Maven
+target/
+*.class
+
+# Logs
+*.log
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# OS e Temporários
+.DS_Store
+Relatorio_QA_*.txt
+
+# Security (Secrets)
+.env
