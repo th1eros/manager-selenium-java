@@ -1,4 +1,4 @@
-package dev.malebolge.qa;
+package dev.argus.qa;
 
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import java.util.List;
 
-public class GuiaDomesticoTest {
+public class argus {
     private WebDriver driver;
 
     @BeforeEach

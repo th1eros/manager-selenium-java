@@ -1,4 +1,4 @@
-package dev.malebolge.qa;
+package dev.argus.qa;
 
 import javax.mail.*;
 import javax.mail.internet.*;
@@ -26,7 +26,7 @@ public class EmailService {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(username));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinatarios));
-            message.setSubject("QA-Malebolge: Relatório Projeto Integrador 1 - 2026");
+            message.setSubject("QA-Argus: Relatório Projeto Integrador 1 - 2026");
             message.setText(mensagemCorpo);
 
             Transport.send(message);
